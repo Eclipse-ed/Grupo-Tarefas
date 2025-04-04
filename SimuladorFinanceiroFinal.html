@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Financeiro Eclipseed</title>
+    <style>
+    
+    
+    body {
+        margin: auto;
+        width: 50%;
+        background-color: DarkSeaGreen;
+        font-family: "Raleway", sans-serif;
+        color: white;
+        }
+     
+        .center {
+            padding: 120px 0;
+            border: 8px;
+            text-align: center;
+          }
+         
+   
+      .header {
+        color: white;
+        text-align: center;
+        font-size: 45px
+   
+      }
+   
+    button  {
+        background-color: black;
+        border: none;
+        border-radius: 12px;
+        color: white;
+        padding: 20px 60px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 24px;
+        cursor: pointer;
+        }
+       
+      p {
+        font-size: 35px;
+        color: white;
+      }
+   
+    input {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }</style>
+
+</head>
+<body>
+    <div class="header">
+    <h1>Eclipseed</h1>
+    </div>
+
+    Informe quantos hectares de plantio:
+    <input type="text" id="input_hectares">
+    <br>
+    Informe o valor bruto faturado no plantio:
+    <input type="text" id="input_faturamento">
+    <br>
+    Informe o valor bruto gasto no plantio:
+    <input type="text" id="input_gasto">
+    <br><br>
+    <button onclick="calcular()">Calcular Financeiro</button>
+    <br><br>
+    <div id="div_mensagem"></div>
+
+</body>
+</html>
+<script>
+   
+    var sensor = Number(130);
+
+    function calcular() {
+
+        var hectares = Number(input_hectares.value);
+        var faturamento = Number(input_faturamento.value);
+        var gasto = Number(input_gasto.value);
+        var qtd = 8*hectares;
+        var instalação = sensor * qtd;
+        var lucro_inicial = faturamento - gasto;
+        var lucro_final = lucro_inicial + (faturamento * 0.03) ;
+        var perdaTotal = (faturamento * 0.20);
+        var perdaLuminosidade = perdaTotal * 0.13;
+        
+
+        if (lucro_inicial < 0){
+         div_mensagem.innerHTML = "Cálculo inválido, o faturamento não pode ser menor que o gasto para calcular o lucro."
+        } else {
+        div_mensagem.innerHTML = `Seu plantio conta com <b style='color: black'> ${hectares} hectares </b>, um valor bruto faturado de <b style='color: black'>R$ ${faturamento},00</b> e <b style='color: black'>R$ ${gasto},00</b> de gasto para replantio. 
+        <br><br>
+        
+        Atualmente a média de perdas em grandes safras tem sido de <b style='color: purple'>20%</b> por hectar </b> , isto seria <b style='color:red'>R$${perdaTotal},00</b> nesse cenário de 
+        produção. Dentre essa porcentagem, cerca de <b style='color: purple'>13%</b> é por conta da falta ou excesso de iluminação recebida pela planta, ou seja, em
+        <b style='color: black'> ${hectares} Hectares </b>, o produtor perde <b style='color:red'>R$${perdaLuminosidade},00 </b> por conta da falta de controle no monitoramento de luminosidade.   
+
+           
+        <br><br>Produção sem perdas = <b style='color: red'>${faturamento},00 </b> ;<br>
+        Valor da perdas de <b>20%</b> =<b style='color: red'> ${perdaTotal},00</b> ;<br>
+        <b style='color: purple'>13%</b> de <b style='color: purple'>20%</b>,é equivalente a <b style='color: red'>R$ ${perdaLuminosidade},00.</b>
+        
+    
+        <br><br>O lucro atual é de <b style='color: green'>R$ ${lucro_inicial},00 </b>, 
+        mas com a utilização dos sensores na quantidade adequada, se tornaria aproximadamente 
+        <b style='color: green'>R$ ${lucro_final},00</b>, considerando o investimento nos sensores. <br><br>
+        
+        O preço de cada arduíno será de R$130,00.
+        <br> <br><br><br><br>
+
+
+        `
+        
+    }
+    }
+</script>
