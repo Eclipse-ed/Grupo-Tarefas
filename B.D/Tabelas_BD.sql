@@ -1,3 +1,4 @@
+
 CREATE DATABASE Eclipseed;
 USE Eclipseed;
 
@@ -7,6 +8,7 @@ CREATE TABLE cliente(
 	idCliente INT PRIMARY KEY AUTO_INCREMENT,
     usuario VARCHAR(50) NOT NULL UNIQUE,
         senha VARCHAR(50) NOT NULL,
+	razaoSocial VARCHAR(45) NOT NULL UNIQUE,
     cnpj CHAR(14) NOT NULL UNIQUE,
 	email VARCHAR(50) NOT NULL UNIQUE,
 	CONSTRAINT chkEmail CHECK(email LIKE ('%@%')),
@@ -21,7 +23,6 @@ CREATE TABLE plantacao (
 	idPlantacao INT,
     fkCliente int,
     constraint pkComposta primary key(idPlantacao,fkCliente),
-    razaoSocial VARCHAR(45) NOT NULL,
 	quantHectare INT NOT NULL,
     dtPlantio date not null,
     dtColheita date not null,
@@ -37,8 +38,14 @@ CREATE TABLE plantacao (
 CREATE TABLE sensor(
 idSensor int primary key auto_increment,
 nome VARCHAR(45) NOT NULL,
-monitoramento VARCHAR(45) NOT NULL,
-constraint chkMonitoramento check(monitoramento in('Funcionando','Instável'))
+fkPlantacao int,
+fkPlantCad int,
+constraint fkSensorPlant
+foreign key (fkPlantacao)
+references plantacao(idPlantacao),
+constraint fkSensorPlantCad
+foreign key (fkPlantCad)
+references plantacao(fkCliente)
 );
 
 
@@ -47,13 +54,10 @@ CREATE TABLE dadosSensor(
 idDados int NOT NULL,
 fkSensor int NOT NULL,
 constraint pkComposta primary key(fkSensor,idDados),
-luminosidade decimal(4,1) NOT NULL,
+luminosidade float NOT NULL,
 statusLuminosidade VARCHAR(45) NOT NULL,
 dtHora datetime NOT NULL,
 constraint chkLuminosidade check(statusLuminosidade in('Acima do recomendado','Abaixo do recomendado','Estável')),
 constraint fkDadosSensor
 foreign key (fkSensor)
 references sensor(idSensor));
-
-
-
