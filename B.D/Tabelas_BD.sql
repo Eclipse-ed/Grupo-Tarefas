@@ -13,7 +13,7 @@ cidade VARCHAR(45) not null,
 bairro VARCHAR(45) not null,
 rua VARCHAR(45) not null,
 numLogradouro CHAR(2) not null,
-complemento CHAR(1) );
+complemento CHAR(2) );
 
 CREATE TABLE cadastro( 
 	idCadastro INT AUTO_INCREMENT,
@@ -39,7 +39,7 @@ cidade VARCHAR(45) not null,
 bairro VARCHAR(45) not null,
 rua VARCHAR(45) not null,
 numLogradouro CHAR(2) not null,
-complemento CHAR(1) );
+complemento CHAR(2) );
 
 CREATE TABLE plantacao (
 	idPlantacao INT,
@@ -94,10 +94,10 @@ references sensor(idSensor));
 
 
 INSERT INTO enderecoCadastro (cep, uf, cidade, bairro, rua, numLogradouro, complemento) VALUES
-('01001-000', 'SP', 'São Paulo', 'Bela Vista', 'Av. Paulista', '15', 'A'),
-('13083-852', 'SP', 'Campinas', 'Barão Geraldo', 'Rua da Universidade', '30', 'B'),
-('30140-070', 'MG', 'Belo Horizonte', 'Savassi', 'Rua da Graduação', '12', 'C'),
-('70040-010', 'DF', 'Brasília', 'Asa Norte', 'Quadra 5', '99', 'D');
+('01001-000', 'SP', 'São Paulo', 'Bela Vista', 'Av. Paulista', '15', ' A'),
+('13083-852', 'SP', 'Campinas', 'Barão Geraldo', 'Rua da Universidade', '30', ' B'),
+('30140-070', 'MG', 'Belo Horizonte', 'Savassi', 'Rua da Graduação', '12', ' C'),
+('70040-010', 'DF', 'Brasília', 'Asa Norte', 'Quadra 5', '99', ' D');
 
 
 
@@ -110,10 +110,10 @@ INSERT INTO cadastro (usuario, senha, razaoSocial, cnpj, email, telefone, fkEnde
 
 
 INSERT INTO enderecoPlantacao (cep, uf, cidade, bairro, rua, numLogradouro, complemento) VALUES
-('17010-001', 'SP', 'Bauru', 'Zona Rural', 'Estrada das Sementes', '10', 'A'),
-('14800-000', 'SP', 'Araraquara', 'Sitio Escola', 'Fazenda 1', '20', 'B'),
-('35680-000', 'MG', 'Pará de Minas', 'Fazenda Teste', 'Via Experimental', '30', 'C'),
-('72700-000', 'DF', 'Planaltina', 'Campus Rural', 'Área Verde', '40', 'D');
+('17010-001', 'SP', 'Bauru', 'Zona Rural', 'Estrada das Sementes', '10', ' A'),
+('14800-000', 'SP', 'Araraquara', 'Sitio Escola', 'Fazenda 1', '20', ' B'),
+('35680-000', 'MG', 'Pará de Minas', 'Fazenda Teste', 'Via Experimental', '30', ' C'),
+('72700-000', 'DF', 'Planaltina', 'Campus Rural', 'Área Verde', '40', ' D');
 
 
 INSERT INTO plantacao (idPlantacao, fkEnderecoPlant,nome, quantHectareAtivo, dtPlantio, dtColheita, fkCadastro, fkEnderecoCadPlant) VALUES
@@ -133,12 +133,11 @@ INSERT INTO sensor (nome, fkPlantacao, fkEnderecoPlantSensor) VALUES
 
 
 INSERT INTO dadosSensor (idDados, fkSensor, lux, statusLuminosidade, dtHora) VALUES
-(1, 1, 550.0, 'Estável', '2025-04-21 08:00:00'),
-(2, 1, 1000.0,'Estável','2025-04-21 09:00:00'),
-(2, 2, 1200.0, 'Acima do recomendado', '2025-04-21 09:00:00'),
-(3, 3, 300.0, 'Abaixo do recomendado', '2025-04-21 10:00:00'),
-(4, 4, 700.0, 'Estável', '2025-04-21 11:00:00');
-
+(1 , 1, 550.50, 'Estável', '2025-04-21 08:00:00'),
+(2 , 1, 1000.30,'Estável','2025-04-21 09:00:00'),
+(1 , 2, 1200.20, 'Acima do recomendado', '2025-04-21 09:00:00'),
+(1, 3, 300.90, 'Abaixo do recomendado', '2025-04-21 10:00:00'),
+(1, 4, 700.80, 'Estável', '2025-04-21 11:00:00');
 
 
 SELECT c.razaoSocial as 'Razão Social',
@@ -152,31 +151,33 @@ SELECT c.razaoSocial as 'Razão Social',
        join sensor as s
        on s.fkPlantacao = p.idPlantacao
        join dadosSensor as d
-       on d.fkSensor = s.idSensor 
-       WHERE c.idCadastro = 1;
+       on d.fkSensor = s.idSensor;
        
 -- Dados Sensor
-SELECT p.nome 'Fazenda', 
+SELECT c.razaoSocial as 'Razão Social',
+	   p.nome as 'Nome da Plantação',
        s.idSensor 'Identificador do Sensor',
        d.lux as 'Lux(lx)',
        d.statusLuminosidade as 'Status da Luminosidade',
        d.dtHora as 'Data e Hora Sensor'
-       FROM plantacao as p join sensor as s
-       on p.idPlantacao = s.fkPlantacao
+       FROM cadastro as c join plantacao as p
+       on c.idCadastro = p.fkCadastro
+       join sensor as s
+       on s.fkPlantacao = p.idPlantacao
        join dadosSensor as d
-       on d.fkSensor = s.idSensor 
-       WHERE p.idPlantacao = 2;
+       on d.fkSensor = s.idSensor
+       WHERE c.razaoSocial = 'Empresa Júnior SP';
        
  -- Endereço das Plantações em São Paulo      
  SELECT c.razaoSocial as 'Razão Social',
 		p.nome as Fazenda,
-        e.cep as CEP,
-		e.uf as UF,
-        e.cidade as Cidade,
-        e.bairro as Bairro,
-        e.rua as Rua,
-        e.numLogradouro as Número,
-        e.complemento as Complemento
+        e.cep as 'CEP  (Fazenda)',
+		e.uf as 'UF (Fazenda)',
+        e.cidade as 'Cidade (Fazenda)',
+        e.bairro as 'Bairro (Fazenda)',
+        e.rua as  'Rua 
+(Fazenda)',
+        concat(e.numLogradouro, e.complemento) as 'Número e Complemento (Fazenda)'
         from cadastro as c join plantacao as p 
         on c.idCadastro = p.fkCadastro
         join enderecoPlantacao as e
@@ -185,18 +186,14 @@ SELECT p.nome 'Fazenda',
        
        
        
- -- Endereço das Empresas parceiras de Minas Gerais      
+ -- Endereço das Empresas parceiras de Minas Gerais(MG) e Distrito Federal(DF)    
  SELECT c.razaoSocial as 'Razão Social',
-		p.nome as Fazenda,
         e.cep as CEP,
 		e.uf as UF,
         e.cidade as Cidade,
         e.bairro as Bairro,
-        e.rua as Rua,1
-        e.numLogradouro as Número,
-        e.complemento as Complemento
-        from cadastro as c join plantacao as p 
-        on c.idCadastro = p.fkCadastro
-        join enderecoCadastro as e
+        e.rua as Rua,
+        concat(e.numLogradouro, e.complemento) as 'Número e Complemento'
+        from cadastro as c join enderecoCadastro as e
         on e.idEnderecoCad = c.fkEnderecoCad
-        WHERE e.UF = 'MG';
+        WHERE e.UF = 'MG' or e.UF ='DF';
