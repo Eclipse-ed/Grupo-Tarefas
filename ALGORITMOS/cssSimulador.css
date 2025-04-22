@@ -1,0 +1,47 @@
+body {
+    margin: auto;
+    width: 50%;
+    background-color: DarkSeaGreen;
+    font-family: "Raleway", sans-serif;
+    color: white;
+    }
+ 
+    .center {
+        padding: 120px 0;
+        border: 8px;
+        text-align: center;
+      }
+     
+
+  .header {
+    color: white;
+    text-align: center;
+    font-size: 45px
+
+  }
+
+button  {
+    background-color: black;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    padding: 20px 60px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 24px;
+    cursor: pointer;
+    }
+   
+  p {
+    font-size: 35px;
+    color: white;
+  }
+
+input {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border-radius: 20px;
+}
