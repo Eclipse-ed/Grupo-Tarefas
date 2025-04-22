@@ -15,15 +15,14 @@ USE Eclipseed;
 
 -- CADASTRO E PLANTAÇÃO
 
-CREATE TABLE enderecoCadastro(
-idEnderecoCad int primary key auto_increment,
+CREATE TABLE cepCadastro(
+idCepCadastro int primary key auto_increment,
 cep CHAR(9) not null,
-uf CHAR(2) not null,
+estado CHAR(2) not null,
 cidade VARCHAR(45) not null,
 bairro VARCHAR(45) not null,
-rua VARCHAR(45) not null,
-numLogradouro CHAR(2) not null,
-complemento CHAR(2) );
+rua VARCHAR(45) not null
+);
 
 CREATE TABLE cadastro( 
 	idCadastro INT AUTO_INCREMENT,
@@ -34,44 +33,46 @@ CREATE TABLE cadastro(
 	email VARCHAR(50) NOT NULL UNIQUE,
 	CONSTRAINT chkEmail CHECK(email LIKE ('%@%')),
 	telefone CHAR(14) NOT NULL,
-    fkEnderecoCad int,
-    constraint EnderecoCad
-    foreign key (fkEnderecoCad)
-    references enderecoCadastro(idEnderecoCad),
-    constraint pkComposta primary key(idCadastro, fkEnderecoCad)
+    fkCepCadastro int not null,
+    numLogradouro CHAR(2) not null,
+    complemento CHAR(2),
+    constraint cepCadastro
+    foreign key (fkCepCadastro)
+    references cepCadastro(idCepCadastro),
+    constraint pkComposta primary key(idCadastro, fkCepCadastro)
 );
 
-CREATE TABLE enderecoPlantacao (
-idEnderecoPlant int primary key auto_increment,
+CREATE TABLE cepPlantacao (
+idCepPlantacao int primary key auto_increment,
 cep CHAR(9) not null,
-uf CHAR(2) not null,
+estado CHAR(2) not null,
 cidade VARCHAR(45) not null,
 bairro VARCHAR(45) not null,
-rua VARCHAR(45) not null,
-numLogradouro CHAR(2) not null,
-complemento CHAR(2) );
+rua VARCHAR(45) not null
+);
 
 CREATE TABLE plantacao (
 	idPlantacao INT,
-    fkEnderecoPlant int,
-    constraint pkComposta primary key(idPlantacao,fkEnderecoPlant),
     nome VARCHAR(45),
 	quantHectareAtivo INT NOT NULL,
     dtPlantio date not null,
     dtColheita date not null,
-	fkCadastro int,
-    fkEnderecoCadPlant int,
+	fkCadastro int not null,
+    fkCepCadPlant int not null,
+    fkCepPlant int,
+    numLogradouro CHAR(2) not null,
+    complemento CHAR(2),
     constraint cadastroPlant
     foreign key (fkCadastro)
     references cadastro(idCadastro),
-    constraint enderecoCadPlant
-    foreign key (fkEnderecoCadPlant)
-    references cadastro(fkEnderecoCad),
-    constraint enderecoPlant
-    foreign key (fkEnderecoPlant)
-    references enderecoPlantacao(idEnderecoPlant)
+    constraint CepCadPlant
+    foreign key (fkCepCadPlant)
+    references cadastro(fkCepCadastro),
+    constraint CepPlantacao
+    foreign key (fkCepPlant)
+    references cepPlantacao(idCepPlantacao),
+    constraint pkComposta primary key(idPlantacao,fkCepPlant)
 );
-
 
 
 -- SENSOR E DADOS
@@ -79,16 +80,14 @@ CREATE TABLE sensor(
 idSensor int primary key auto_increment,
 nome VARCHAR(45) NOT NULL,
 fkPlantacao int,
-fkEnderecoPlantSensor int,
+fkCepPlantSensor int,
 constraint fkSensorPlant
 foreign key (fkPlantacao)
 references plantacao(idPlantacao),
-constraint fkEnderecoPlantSensor
-foreign key (fkEnderecoPlantSensor)
-references plantacao(fkEnderecoPlant)
+constraint fkCepPlantSensor
+foreign key (fkCepPlantSensor)
+references plantacao(fkCepPlant)
 );
-
-
 
 CREATE TABLE dadosSensor(
 idDados int NOT NULL,
@@ -103,38 +102,38 @@ foreign key (fkSensor)
 references sensor(idSensor));
 
 
-INSERT INTO enderecoCadastro (cep, uf, cidade, bairro, rua, numLogradouro, complemento) VALUES
-('01001-000', 'SP', 'São Paulo', 'Bela Vista', 'Av. Paulista', '15', ' A'),
-('13083-852', 'SP', 'Campinas', 'Barão Geraldo', 'Rua da Universidade', '30', ' B'),
-('30140-070', 'MG', 'Belo Horizonte', 'Savassi', 'Rua da Graduação', '12', ' C'),
-('70040-010', 'DF', 'Brasília', 'Asa Norte', 'Quadra 5', '99', ' D');
+INSERT INTO cepCadastro (cep, estado, cidade, bairro, rua) VALUES
+('01001-000', 'SP', 'São Paulo', 'Bela Vista', 'Av. Paulista' ),
+('13083-852', 'SP', 'Campinas', 'Barão Geraldo', 'Rua da Universidade' ),
+('30140-070', 'MG', 'Belo Horizonte', 'Savassi', 'Rua da Graduação'),
+('70040-010', 'DF', 'Brasília', 'Asa Norte', 'Quadra 5');
 
 
 
-INSERT INTO cadastro (usuario, senha, razaoSocial, cnpj, email, telefone, fkEnderecoCad) VALUES
-('empjrsampa', 'senha123', 'Empresa Júnior SP', '00.000.000/0001-01', 'contato@empjrsp.com', '(11)98888-7777', 1),
-('labcampinas', 'senha456', 'Laboratório Agrícola Campinas', '11.111.111/0001-11', 'agro@unicamp.com', '(11)99777-6666', 2),
-('agrobh', 'senha789', 'Centro de Agro BH', '22.222.222/0001-22', 'contato@agrobh.com', '(31)99666-5555', 3),
-('facdf', 'senha000', 'Faculdade DF Rural', '33.333.333/0001-33', 'rural@facdf.com', '(61)99555-4444', 4);
+INSERT INTO cadastro (usuario, senha, razaoSocial, cnpj, email, telefone, fkCepCadastro, numLogradouro, complemento) VALUES
+('empjrsampa', 'senha123', 'Empresa Júnior SP', '00.000.000/0001-01', 'contato@empjrsp.com', '(11)98888-7777', 1,'15', ' A'),
+('labcampinas', 'senha456', 'Laboratório Agrícola Campinas', '11.111.111/0001-11', 'agro@unicamp.com', '(11)99777-6666', 2, '30', ' B'),
+('agrobh', 'senha789', 'Centro de Agro BH', '22.222.222/0001-22', 'contato@agrobh.com', '(31)99666-5555', 3, '12', ' C'),
+('facdf', 'senha000', 'Faculdade DF Rural', '33.333.333/0001-33', 'rural@facdf.com', '(61)99555-4444', 4, '99', ' D');
 
 
 
-INSERT INTO enderecoPlantacao (cep, uf, cidade, bairro, rua, numLogradouro, complemento) VALUES
-('17010-001', 'SP', 'Bauru', 'Zona Rural', 'Estrada das Sementes', '10', ' A'),
-('14800-000', 'SP', 'Araraquara', 'Sitio Escola', 'Fazenda 1', '20', ' B'),
-('35680-000', 'MG', 'Pará de Minas', 'Fazenda Teste', 'Via Experimental', '30', ' C'),
-('72700-000', 'DF', 'Planaltina', 'Campus Rural', 'Área Verde', '40', ' D');
+INSERT INTO cepPlantacao (cep, estado, cidade, bairro, rua) VALUES
+('17010-001', 'SP', 'Bauru', 'Zona Rural', 'Estrada das Sementes'),
+('14800-000', 'SP', 'Araraquara', 'Sitio Escola', 'Fazenda 1'),
+('35680-000', 'MG', 'Pará de Minas', 'Fazenda Teste', 'Via Experimental'),
+('72700-000', 'DF', 'Planaltina', 'Campus Rural', 'Área Verde');
 
 
-INSERT INTO plantacao (idPlantacao, fkEnderecoPlant,nome, quantHectareAtivo, dtPlantio, dtColheita, fkCadastro, fkEnderecoCadPlant) VALUES
-(1, 1,'Rancho Feliz' ,10, '2025-02-01', '2025-06-30', 1, 1),
-(2, 2,'Rio Bravo' ,8, '2025-01-15', '2025-05-20', 2, 2),
-(3, 3,'Fazendo do Pica-Pau' ,12, '2025-03-10', '2025-08-01', 3, 3),
-(4, 4,'Sítio da Soja' ,15, '2025-04-01', '2025-09-01', 4, 4);
+INSERT INTO plantacao (idPlantacao, fkCepPlant,nome, quantHectareAtivo, dtPlantio, dtColheita, fkCadastro, fkCepCadPlant, numLogradouro, complemento) VALUES
+(1, 1,'Rancho Feliz' ,10, '2025-02-01', '2025-06-30', 1, 1, '10', ' A'),
+(2, 2,'Rio Bravo' ,8, '2025-01-15', '2025-05-20', 2, 2, '20', ' B'),
+(3, 3,'Fazendo do Pica-Pau' ,12, '2025-03-10', '2025-08-01', 3, 3, '30', ' C'),
+(4, 4,'Sítio da Soja' ,15, '2025-04-01', '2025-09-01', 4, 4, '40', ' D');
 
 
 
-INSERT INTO sensor (nome, fkPlantacao, fkEnderecoPlantSensor) VALUES
+INSERT INTO sensor (nome, fkPlantacao, fkCepPlantSensor) VALUES
 ('Sensor Umidade Bauru', 1, 1),
 ('Sensor Luminosidade Araraquara', 2, 2),
 ('Sensor Temperatura BH', 3, 3),
@@ -163,47 +162,44 @@ SELECT c.razaoSocial as 'Razão Social',
        join dadosSensor as d
        on d.fkSensor = s.idSensor;
        
--- Dados Sensor
-SELECT c.razaoSocial as 'Razão Social',
-	   p.nome as 'Nome da Plantação',
+-- Dados Sensor da Fazenda Rancho Feliz
+SELECT p.nome as 'Nome da Plantação',
        s.idSensor 'Identificador do Sensor',
        d.lux as 'Lux(lx)',
        d.statusLuminosidade as 'Status da Luminosidade',
        d.dtHora as 'Data e Hora Sensor'
-       FROM cadastro as c join plantacao as p
-       on c.idCadastro = p.fkCadastro
-       join sensor as s
+       FROM plantacao as p join sensor as s
        on s.fkPlantacao = p.idPlantacao
        join dadosSensor as d
        on d.fkSensor = s.idSensor
-       WHERE c.razaoSocial = 'Empresa Júnior SP';
+       WHERE p.nome = 'Rancho Feliz';
        
  -- Endereço das Plantações em São Paulo      
  SELECT c.razaoSocial as 'Razão Social',
 		p.nome as Fazenda,
-        e.cep as 'CEP  (Fazenda)',
-		e.uf as 'UF (Fazenda)',
-        e.cidade as 'Cidade (Fazenda)',
-        e.bairro as 'Bairro (Fazenda)',
-        e.rua as  'Rua 
+        cep.cep as 'CEP  (Fazenda)',
+		cep.estado as 'UF (Fazenda)',
+        cep.cidade as 'Cidade (Fazenda)',
+        cep.bairro as 'Bairro (Fazenda)',
+        cep.rua as  'Rua 
 (Fazenda)',
-        concat(e.numLogradouro, e.complemento) as 'Número e Complemento (Fazenda)'
+        concat(c.numLogradouro, c.complemento) as 'Número e Complemento (Fazenda)'
         from cadastro as c join plantacao as p 
         on c.idCadastro = p.fkCadastro
-        join enderecoPlantacao as e
-        on p.fkEnderecoPlant = e.idEnderecoPlant
-        WHERE e.UF = 'SP';
+        join cepPlantacao as cep
+        on p.fkCepPlant = cep.idCepPlantacao
+        WHERE cep.estado = 'SP';
        
        
        
  -- Endereço das Empresas parceiras de Minas Gerais(MG) e Distrito Federal(DF)    
  SELECT c.razaoSocial as 'Razão Social',
-        e.cep as CEP,
-		e.uf as UF,
-        e.cidade as Cidade,
-        e.bairro as Bairro,
-        e.rua as Rua,
-        concat(e.numLogradouro, e.complemento) as 'Número e Complemento'
-        from cadastro as c join enderecoCadastro as e
-        on e.idEnderecoCad = c.fkEnderecoCad
-        WHERE e.UF = 'MG' or e.UF ='DF';
+        cep.cep as CEP,
+		cep.estado as UF,
+        cep.cidade as Cidade,
+        cep.bairro as Bairro,
+        cep.rua as Rua,
+        concat(c.numLogradouro, c.complemento) as 'Número e Complemento'
+        from cadastro as c join cepCadastro as cep
+        on cep.idCepCadastro = c.fkCepCadastro
+        WHERE cep.estado = 'MG' or cep.estado ='DF';
