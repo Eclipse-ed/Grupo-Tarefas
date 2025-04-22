@@ -1,3 +1,13 @@
+/*
+                                   Integrantes Grupo 08(Eclipseed)
+                                            Beatriz Pina
+                                            Gabriel Oliveira
+                                            Kauã Thieme
+                                            Gustavo Vieck
+                                            Willian Martins
+*/
+
+
 
 CREATE DATABASE Eclipseed;
 USE Eclipseed;
@@ -23,7 +33,7 @@ CREATE TABLE cadastro(
     cnpj CHAR(18) NOT NULL UNIQUE,
 	email VARCHAR(50) NOT NULL UNIQUE,
 	CONSTRAINT chkEmail CHECK(email LIKE ('%@%')),
-	telefone CHAR(15) NOT NULL,
+	telefone CHAR(14) NOT NULL,
     fkEnderecoCad int,
     constraint EnderecoCad
     foreign key (fkEnderecoCad)
@@ -102,10 +112,10 @@ INSERT INTO enderecoCadastro (cep, uf, cidade, bairro, rua, numLogradouro, compl
 
 
 INSERT INTO cadastro (usuario, senha, razaoSocial, cnpj, email, telefone, fkEnderecoCad) VALUES
-('empjrsampa', 'senha123', 'Empresa Júnior SP', '00.000.000/0001-01', 'contato@empjrsp.com', '11988887777', 1),
-('labcampinas', 'senha456', 'Laboratório Agrícola Campinas', '11.111.111/0001-11', 'agro@unicamp.com', '19997776666', 2),
-('agrobh', 'senha789', 'Centro de Agro BH', '22.222.222/0001-22', 'contato@agrobh.com', '31996665555', 3),
-('facdf', 'senha000', 'Faculdade DF Rural', '33.333.333/0001-33', 'rural@facdf.com', '61995554444', 4);
+('empjrsampa', 'senha123', 'Empresa Júnior SP', '00.000.000/0001-01', 'contato@empjrsp.com', '(11)98888-7777', 1),
+('labcampinas', 'senha456', 'Laboratório Agrícola Campinas', '11.111.111/0001-11', 'agro@unicamp.com', '(11)99777-6666', 2),
+('agrobh', 'senha789', 'Centro de Agro BH', '22.222.222/0001-22', 'contato@agrobh.com', '(31)99666-5555', 3),
+('facdf', 'senha000', 'Faculdade DF Rural', '33.333.333/0001-33', 'rural@facdf.com', '(61)99555-4444', 4);
 
 
 
