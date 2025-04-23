@@ -15,8 +15,8 @@ USE Eclipseed;
 
 -- CADASTRO E PLANTAÇÃO
 
-CREATE TABLE cepCadastro(
-idCepCadastro int primary key auto_increment,
+CREATE TABLE cep(
+idCep int primary key auto_increment,
 cep CHAR(9) not null,
 estado CHAR(2) not null,
 cidade VARCHAR(45) not null,
@@ -38,18 +38,10 @@ CREATE TABLE cadastro(
     complemento CHAR(2),
     constraint cepCadastro
     foreign key (fkCepCadastro)
-    references cepCadastro(idCepCadastro),
+    references cep(idCep),
     constraint pkComposta primary key(idCadastro, fkCepCadastro)
 );
 
-CREATE TABLE cepPlantacao (
-idCepPlantacao int primary key auto_increment,
-cep CHAR(9) not null,
-estado CHAR(2) not null,
-cidade VARCHAR(45) not null,
-bairro VARCHAR(45) not null,
-rua VARCHAR(45) not null
-);
 
 CREATE TABLE plantacao (
 	idPlantacao INT,
@@ -58,7 +50,7 @@ CREATE TABLE plantacao (
     dtPlantio date not null,
     dtColheita date not null,
 	fkCadastro int not null,
-    fkCepCadPlant int not null,
+    fkCadastroCep int not null,
     fkCepPlant int,
     numLogradouro CHAR(2) not null,
     complemento CHAR(2),
@@ -66,11 +58,11 @@ CREATE TABLE plantacao (
     foreign key (fkCadastro)
     references cadastro(idCadastro),
     constraint CepCadPlant
-    foreign key (fkCepCadPlant)
+    foreign key (fkCadastroCep)
     references cadastro(fkCepCadastro),
     constraint CepPlantacao
     foreign key (fkCepPlant)
-    references cepPlantacao(idCepPlantacao),
+    references cep(idCep),
     constraint pkComposta primary key(idPlantacao,fkCepPlant)
 );
 
@@ -101,12 +93,15 @@ constraint fkDadosSensor
 foreign key (fkSensor)
 references sensor(idSensor));
 
-
-INSERT INTO cepCadastro (cep, estado, cidade, bairro, rua) VALUES
+INSERT INTO cep (cep, estado, cidade, bairro, rua) VALUES
 ('01001-000', 'SP', 'São Paulo', 'Bela Vista', 'Av. Paulista' ),
 ('13083-852', 'SP', 'Campinas', 'Barão Geraldo', 'Rua da Universidade' ),
 ('30140-070', 'MG', 'Belo Horizonte', 'Savassi', 'Rua da Graduação'),
-('70040-010', 'DF', 'Brasília', 'Asa Norte', 'Quadra 5');
+('70040-010', 'DF', 'Brasília', 'Asa Norte', 'Quadra 5'),
+('17010-001', 'SP', 'Bauru', 'Zona Rural', 'Estrada das Sementes'),
+('14800-000', 'SP', 'Araraquara', 'Sitio Escola', 'Fazenda 1'),
+('35680-000', 'MG', 'Pará de Minas', 'Fazenda Teste', 'Via Experimental'),
+('72700-000', 'DF', 'Planaltina', 'Campus Rural', 'Área Verde');
 
 
 
@@ -118,35 +113,31 @@ INSERT INTO cadastro (usuario, senha, razaoSocial, cnpj, email, telefone, fkCepC
 
 
 
-INSERT INTO cepPlantacao (cep, estado, cidade, bairro, rua) VALUES
-('17010-001', 'SP', 'Bauru', 'Zona Rural', 'Estrada das Sementes'),
-('14800-000', 'SP', 'Araraquara', 'Sitio Escola', 'Fazenda 1'),
-('35680-000', 'MG', 'Pará de Minas', 'Fazenda Teste', 'Via Experimental'),
-('72700-000', 'DF', 'Planaltina', 'Campus Rural', 'Área Verde');
 
 
-INSERT INTO plantacao (idPlantacao, fkCepPlant,nome, quantHectareAtivo, dtPlantio, dtColheita, fkCadastro, fkCepCadPlant, numLogradouro, complemento) VALUES
-(1, 1,'Rancho Feliz' ,10, '2025-02-01', '2025-06-30', 1, 1, '10', ' A'),
-(2, 2,'Rio Bravo' ,8, '2025-01-15', '2025-05-20', 2, 2, '20', ' B'),
-(3, 3,'Fazendo do Pica-Pau' ,12, '2025-03-10', '2025-08-01', 3, 3, '30', ' C'),
-(4, 4,'Sítio da Soja' ,15, '2025-04-01', '2025-09-01', 4, 4, '40', ' D');
+
+INSERT INTO plantacao (idPlantacao, fkCepPlant,nome, quantHectareAtivo, dtPlantio, dtColheita, fkCadastro, fkCadastroCep, numLogradouro, complemento) VALUES
+(1, 5,'Rancho Feliz' ,10, '2025-02-01', '2025-06-30', 1, 1, '10', ' A'),
+(2, 6,'Rio Bravo' ,8, '2025-01-15', '2025-05-20', 2, 2, '20', ' B'),
+(3, 7,'Fazendo do Pica-Pau' ,12, '2025-03-10', '2025-08-01', 3, 3, '30', ' C'),
+(4, 8,'Sítio da Soja' ,15, '2025-04-01', '2025-09-01', 4, 4, '40', ' D');
 
 
 
 INSERT INTO sensor (nome, fkPlantacao, fkCepPlantSensor) VALUES
-('Sensor Umidade Bauru', 1, 1),
-('Sensor Luminosidade Araraquara', 2, 2),
-('Sensor Temperatura BH', 3, 3),
-('Sensor pH Solo DF', 4, 4);
+('Sensor LDR', 1, 5),
+('Sensor LDR', 2, 6),
+('Sensor LDR', 3, 7),
+('Sensor LDR', 4, 8);
 
 
 
 INSERT INTO dadosSensor (idDados, fkSensor, lux, statusLuminosidade, dtHora) VALUES
-(1 , 1, 550.50, 'Estável', '2025-04-21 08:00:00'),
-(2 , 1, 1000.30,'Estável','2025-04-21 09:00:00'),
-(1 , 2, 1200.20, 'Acima do recomendado', '2025-04-21 09:00:00'),
+(1 , 1, 15500.50, 'Estável', '2025-04-21 08:00:00'),
+(2 , 1, 10000.30,'Estável','2025-04-21 09:00:00'),
+(1 , 2, 120000.20, 'Acima do recomendado', '2025-04-21 09:00:00'),
 (1, 3, 300.90, 'Abaixo do recomendado', '2025-04-21 10:00:00'),
-(1, 4, 700.80, 'Estável', '2025-04-21 11:00:00');
+(1, 4, 17000.80, 'Estável', '2025-04-21 11:00:00');
 
 
 SELECT c.razaoSocial as 'Razão Social',
@@ -186,8 +177,8 @@ SELECT p.nome as 'Nome da Plantação',
         concat(c.numLogradouro, c.complemento) as 'Número e Complemento (Fazenda)'
         from cadastro as c join plantacao as p 
         on c.idCadastro = p.fkCadastro
-        join cepPlantacao as cep
-        on p.fkCepPlant = cep.idCepPlantacao
+        join cep 
+        on p.fkCepPlant = cep.idCep
         WHERE cep.estado = 'SP';
        
        
@@ -200,6 +191,6 @@ SELECT p.nome as 'Nome da Plantação',
         cep.bairro as Bairro,
         cep.rua as Rua,
         concat(c.numLogradouro, c.complemento) as 'Número e Complemento'
-        from cadastro as c join cepCadastro as cep
-        on cep.idCepCadastro = c.fkCepCadastro
+        from cadastro as c join cep
+        on cep.idCep = c.fkCepCadastro
         WHERE cep.estado = 'MG' or cep.estado ='DF';
